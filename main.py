@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 from datetime import date, datetime
+import os
 import random
 import secrets
 
+from dotenv import load_dotenv
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
@@ -14,6 +16,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import nh3
 
 from forms import PostForm, RegisterForm, LoginForm, CommentForm
+
+
+# Load the .env file
+load_dotenv()
 
 
 app = Flask(__name__)
@@ -29,7 +35,7 @@ class Base(DeclarativeBase):
     pass
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
@@ -270,7 +276,8 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5003)
+    debug = bool(os.getenv("DEBUG"))
+    app.run(debug=debug, port=5003)
 
 
 # TODO: add admin powers
